@@ -84,17 +84,11 @@ test('Agent', (t) => {
   t.truthy(db.Agent, 'Agent service should exists')
 })
 
-test.serial('Setup', (t) => {
+test.serial('Setup Agent', (t) => {
   t.true(AgentStub.hasMany.called, 'AgentModel.hasMany was executed')
   t.true(
     AgentStub.hasMany.calledWith(MetricStub),
     'Argument should be the MetricModel'
-  )
-
-  t.true(MetricStub.belongsTo.called, 'MetricMode.belongsTo was executed')
-  t.true(
-    MetricStub.belongsTo.calledWith(AgentStub),
-    'Argument should be the AgentModel'
   )
 })
 
@@ -114,11 +108,11 @@ test.serial('Agent#findById', async (t) => {
 test.serial('Agent#findUuid', async (t) => {
   const agent = await db.Agent.findByUuid(uuid)
 
-  t.true(AgentStub.findOne.called, 'findById Should be Called on model')
-  t.true(AgentStub.findOne.calledOnce, 'findById Should be Called Once')
+  t.true(AgentStub.findOne.called, 'findOne Should be Called on model')
+  t.true(AgentStub.findOne.calledOnce, 'findOne Should be Called Once')
   t.true(
     AgentStub.findOne.calledWith(uuidArgs),
-    'findById Should be Called With Specific Id'
+    'findOne Should be Called With Specific Id'
   )
 
   t.deepEqual(agent, agentFixture.byUuid(uuid), 'should be the same')
