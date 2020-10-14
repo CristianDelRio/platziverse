@@ -1,24 +1,29 @@
-'use strict'
+'use strict';
 
-const debug = require('debug')('platziverse:db:setup')
-const inquirer = require('inquirer')
-const chalk = require('chalk')
-const db = require('./')
+const debug = require('debug')('platziverse:db:setup');
+const inquirer = require('inquirer');
+const chalk = require('chalk');
+const db = require('./');
 
-const prompt = inquirer.createPromptModule()
+const prompt = inquirer.createPromptModule();
 
-async function setup () {
-  const answer = await prompt([
-    {
-      type: 'confirm',
-      name: 'setup',
-      message:
-        'This will destroy your database, are you sure you want to continue?'
+async function setup() {
+  const flagArgument = (process.argv[2] || '').replace(/-/g, '');
+  const automatedRun = flagArgument.includes('y', 'yes');
+
+  if (!automatedRun) {
+    const answer = await prompt([
+      {
+        type: 'confirm',
+        name: 'setup',
+        message:
+          'This will destroy your database, are you sure you want to continue?'
+      }
+    ]);
+
+    if (!answer.setup) {
+      return console.log('Nothing Happened :D');
     }
-  ])
-
-  if (!answer.setup) {
-    return console.log('Nothing Happened :D')
   }
 
   const config = {
@@ -29,18 +34,18 @@ async function setup () {
     dialect: 'postgres',
     logging: (s) => debug(s),
     setup: true
-  }
+  };
 
-  await db(config).catch(handleFatalError)
+  await db(config).catch(handleFatalError);
 
-  console.log('Success!')
-  process.exit(0)
+  console.log('Success!');
+  process.exit(0);
 }
 
-function handleFatalError (err) {
-  console.error(`${chalk.red('[fatal error]')} ${err.message}`)
-  console.error(err.stack)
-  process.exit(1)
+function handleFatalError(err) {
+  console.error(`${chalk.red('[fatal error]')} ${err.message}`);
+  console.error(err.stack);
+  process.exit(1);
 }
 
-setup()
+setup();
